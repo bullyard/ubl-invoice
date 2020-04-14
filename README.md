@@ -7,7 +7,7 @@ A PHP Wrapper for creating UBL invoices. This code is a hard fork of the [`cleve
 This package requires PHP 7.0 or higher. Installation can be done with [composer](https://www.getcomposer.org).
 
 ```sh
-composer require num-num/ubl-invoice
+composer require bullyard/ubl-invoice
 ```
 
 ## Contributing
