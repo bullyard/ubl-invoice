@@ -1,5 +1,5 @@
 {
-    "name": "num-num/ubl-invoice",
+    "name": "bullyard/ubl-invoice",
     "description": "A modern object-oriented PHP library to create valid UBL files",
     "keywords": [
         "ubl",
@@ -12,13 +12,13 @@
         "xml",
         "xml invoice"
     ],
-    "homepage": "https://github.com/num-num/ubl-invoice",
+    "homepage": "https://github.com/bullyard/ubl-invoice",
     "license": "MIT",
     "authors": [
         {
-            "name": "Bert Devriese",
-            "email": "bert@numnum.be",
-            "homepage": "https://www.numnum.be",
+            "name": "Rodrigo Perez",
+            "email": "public_email@bullyard.no",
+            "homepage": "https://bullyard.no",
             "role": "Developer"
         }
     ],
