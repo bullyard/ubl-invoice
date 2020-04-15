@@ -3,6 +3,7 @@
 namespace Bullyard\UBL;
 
 use Sabre\Xml\Service;
+use Sabre\Xml\Writer;
 use Sabre\Xml\XmlSerializable;
 
 
