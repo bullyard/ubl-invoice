@@ -1,4 +1,4 @@
-# UBL-Invoice Modified to be used AS a EHF 2.0 generator
+# UBL-Invoice Modified to be used as an EHF 2.0 generator
 
 Rough implemntation to support invoice, credit note and reminder 
 
