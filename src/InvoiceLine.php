@@ -10,13 +10,11 @@ class InvoiceLine implements XmlSerializable
    private $id;
    private $invoicedQuantity;
    private $lineExtensionAmount;
-   private $unitCode = 'MON';
+   private $unitCode = 'VAR';
    private $taxTotal;
    private $note;
    private $item;
    private $price;
-
-   private $unitCode = 'VAR';
    private $unitCodeListID = "UNECERec20"; // https://docs.peppol.eu/poacc/billing/3.0/codelist/UNECERec20/
    private $allowanceCharge;
 
