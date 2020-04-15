@@ -1,6 +1,6 @@
 <?php
 
-namespace NumNum\UBL;
+namespace Bullyard\UBL;
 
 /**
  * All possible Unit Codes that can be used

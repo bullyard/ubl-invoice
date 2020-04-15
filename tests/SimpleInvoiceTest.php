@@ -1,6 +1,6 @@
 <?php
 
-namespace NumNum\UBL\Tests;
+namespace Bullyard\UBL\Tests;
 
 use PHPUnit\Framework\TestCase;
 
@@ -15,11 +15,11 @@ class SimpleInvoiceTest extends TestCase
     public function testIfXMLIsValid()
     {
         // Address country
-        $country = (new \NumNum\UBL\Country())
+        $country = (new \Bullyard\UBL\Country())
             ->setIdentificationCode('BE');
 
         // Full address
-        $address = (new \NumNum\UBL\Address())
+        $address = (new \Bullyard\UBL\Address())
             ->setStreetName('Korenmarkt')
             ->setBuildingNumber(1)
             ->setCityName('Gent')
@@ -27,41 +27,41 @@ class SimpleInvoiceTest extends TestCase
             ->setCountry($country);
 
         // Supplier company node
-        $supplierCompany = (new \NumNum\UBL\Party())
+        $supplierCompany = (new \Bullyard\UBL\Party())
             ->setName('Supplier Company Name')
             ->setPhysicalLocation($address)
             ->setPostalAddress($address);
 
         // Client company node
-        $clientCompany = (new \NumNum\UBL\Party())
+        $clientCompany = (new \Bullyard\UBL\Party())
             ->setName('My client')
             ->setPostalAddress($address);
 
-        $legalMonetaryTotal = (new \NumNum\UBL\LegalMonetaryTotal())
+        $legalMonetaryTotal = (new \Bullyard\UBL\LegalMonetaryTotal())
             ->setPayableAmount(10 + 2)
             ->setAllowanceTotalAmount(0);
 
         // Tax scheme
-        $taxScheme = (new \NumNum\UBL\TaxScheme())
+        $taxScheme = (new \Bullyard\UBL\TaxScheme())
             ->setId(0);
 
         // Product
-        $productItem = (new \NumNum\UBL\Item())
+        $productItem = (new \Bullyard\UBL\Item())
             ->setName('Product Name')
             ->setDescription('Product Description');
 
         // Price
-        $price = (new \NumNum\UBL\Price())
+        $price = (new \Bullyard\UBL\Price())
             ->setBaseQuantity(1)
-            ->setUnitCode(\NumNum\UBL\UnitCode::UNIT)
+            ->setUnitCode(\Bullyard\UBL\UnitCode::UNIT)
             ->setPriceAmount(10);
 
         // Invoice Line tax totals
-        $lineTaxTotal = (new \NumNum\UBL\TaxTotal())
+        $lineTaxTotal = (new \Bullyard\UBL\TaxTotal())
             ->setTaxAmount(2.1);
 
         // Invoice Line(s)
-        $invoiceLine = (new \NumNum\UBL\InvoiceLine())
+        $invoiceLine = (new \Bullyard\UBL\InvoiceLine())
             ->setId(0)
             ->setItem($productItem)
             ->setPrice($price)
@@ -71,23 +71,23 @@ class SimpleInvoiceTest extends TestCase
         $invoiceLines = [$invoiceLine];
 
         // Total Taxes
-        $taxCategory = (new \NumNum\UBL\TaxCategory())
+        $taxCategory = (new \Bullyard\UBL\TaxCategory())
             ->setId(0)
             ->setName('VAT21%')
             ->setPercent(.21)
             ->setTaxScheme($taxScheme);
 
-        $taxSubTotal = (new \NumNum\UBL\TaxSubTotal())
+        $taxSubTotal = (new \Bullyard\UBL\TaxSubTotal())
             ->setTaxableAmount(10)
             ->setTaxAmount(2.1)
             ->setTaxCategory($taxCategory);
 
-        $taxTotal = (new \NumNum\UBL\TaxTotal())
+        $taxTotal = (new \Bullyard\UBL\TaxTotal())
             ->addTaxSubTotal($taxSubTotal)
             ->setTaxAmount(2.1);
 
         // Invoice object
-        $invoice = (new \NumNum\UBL\Invoice())
+        $invoice = (new \Bullyard\UBL\Invoice())
             ->setId(1234)
             ->setIssueDate(new \DateTime())
             ->setAccountingSupplierParty($supplierCompany)
@@ -97,8 +97,8 @@ class SimpleInvoiceTest extends TestCase
             ->setTaxTotal($taxTotal);
 
         // Test created object
-        // Use \NumNum\UBL\Generator to generate an XML string
-        $generator = new \NumNum\UBL\Generator();
+        // Use \Bullyard\UBL\Generator to generate an XML string
+        $generator = new \Bullyard\UBL\Generator();
         $outputXMLString = $generator->invoice($invoice);
 
         // Create PHP Native DomDocument object, that can be

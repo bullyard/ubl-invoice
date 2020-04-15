@@ -1,6 +1,6 @@
 <?php
 
-namespace NumNum\UBL;
+namespace Bullyard\UBL;
 
 class Schema
 {

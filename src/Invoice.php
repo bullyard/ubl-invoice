@@ -1,6 +1,6 @@
 <?php
 
-namespace NumNum\UBL;
+namespace Bullyard\UBL;
 
 use Sabre\Xml\Writer;
 use Sabre\Xml\XmlSerializable;
@@ -8,7 +8,10 @@ use Sabre\Xml\XmlSerializable;
 class Invoice implements XmlSerializable
 {
     private $UBLVersionID = '2.1';
-    private $customizationID = '1.0';
+    private $customizationID = 'urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol5a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0';
+    private $ProfileID = 'urn:www.cenbii.eu:profile:bii05:ver2.0';
+    private $OrderReference;
+    private $Note;
     private $id;
     private $copyIndicator = false;
     private $issueDate;
@@ -25,6 +28,7 @@ class Invoice implements XmlSerializable
     private $allowanceCharges;
     private $additionalDocumentReference;
     private $documentCurrencyCode = 'EUR';
+
 
     /**
      * @return string
@@ -328,6 +332,40 @@ class Invoice implements XmlSerializable
         return $this;
     }
 
+    public function setProfileID(string $id)
+   {
+      $this->ProfileID = $id;
+      return $this;
+   }
+
+   public function getProfileID()
+   {
+      return $this->ProfileID;
+   }
+
+   public function setNote(string $Note)
+   {
+      $this->Note = $Note;
+      return $this;
+   }
+
+   public function getNote()
+   {
+      return $this->Note;
+   }
+
+
+   public function getOrderReference()
+   {
+      return $this->OrderReference;
+   }
+
+   public function setOrderReference($value)
+   {
+      $this->OrderReference = $value;
+      return $this;
+   }
+
     /**
      * The validate function that is called during xml writing to valid the data of the object.
      *
@@ -369,88 +407,104 @@ class Invoice implements XmlSerializable
         }
     }
 
-    /**
-     * The xmlSerialize method is called during xml writing.
-     * @param Writer $writer
-     * @return void
-     */
-    public function xmlSerialize(Writer $writer)
-    {
-        $this->validate();
+   /**
+   * The xmlSerialize method is called during xml writing.
+   * @param Writer $writer
+   * @return void
+   */
+   public function xmlSerialize(Writer $writer)
+   {
+      $this->validate();
 
-        $writer->write([
-            Schema::CBC . 'UBLVersionID' => $this->UBLVersionID,
-            Schema::CBC . 'CustomizationID' => $this->customizationID,
-            Schema::CBC . 'ID' => $this->id,
-            Schema::CBC . 'CopyIndicator' => $this->copyIndicator ? 'true' : 'false',
-            Schema::CBC . 'IssueDate' => $this->issueDate->format('Y-m-d'),
-            [
-                'name' => Schema::CBC . 'InvoiceTypeCode',
-                'value' => $this->invoiceTypeCode
+      $writer->write([
+         Schema::CBC . 'UBLVersionID' => $this->UBLVersionID,
+         Schema::CBC . 'CustomizationID' => $this->CustomizationID,
+         Schema::CBC . 'ProfileID' => $this->ProfileID,
+         Schema::CBC . 'ID' => $this->getId(),
+         //Schema::CBC . 'CopyIndicator' => $this->isCopyIndicator() ? 'true' : 'false',
+         Schema::CBC . 'IssueDate' => $this->getIssueDate()->format('Y-m-d'),
+         [
+            'name' => Schema::CBC . 'InvoiceTypeCode',
+            'value' => $this->getInvoiceTypeCode(),
+            'attributes' => [
+               'listID' => 'UNCL1001' //https://docs.peppol.eu/poacc/billing/3.0/codelist/UNCL1001-inv/
             ]
-        ]);
+         ]
+      ]);
 
-        if ($this->taxPointDate != null) {
+
+      if ($this->getNote() != null) {
+         $writer->write([
+            Schema::CBC . 'Note' => $this->getNote()
+         ]);
+      }
+
+      if ($this->getTaxPointDate() != null) {
+         $writer->write([
+            Schema::CBC . 'TaxPointDate' => $this->getTaxPointDate()->format('Y-m-d')
+         ]);
+      }
+
+      $writer->write([
+         'name' => Schema::CBC . 'DocumentCurrencyCode',
+         'value' => 'NOK',
+         'attributes' => [
+            'listID' => 'ISO4217' //https://docs.peppol.eu/poacc/billing/3.0/codelist/UNCL1001-inv/
+         ]
+      ]);
+
+      if ($this->getAdditionalDocumentReference() != null) {
+         $writer->write([
+            Schema::CAC . 'AdditionalDocumentReference' => $this->getAdditionalDocumentReference()
+         ]);
+      }
+
+      if ($this->getOrderReference() != null) {
+         $writer->write([
+            Schema::CAC . 'OrderReference' => $this->getOrderReference()
+         ]);
+      }
+
+      $writer->write([
+         Schema::CAC . 'AccountingSupplierParty' => [Schema::CAC . "Party" => $this->getAccountingSupplierParty()],
+         Schema::CAC . 'AccountingCustomerParty' => [Schema::CAC . "Party" => $this->getAccountingCustomerParty()],
+      ]);
+
+      if ($this->getPaymentMeans() != null) {
+         $writer->write([
+            Schema::CAC . 'PaymentMeans' => $this->getPaymentMeans()
+         ]);
+      }
+
+      if ($this->getPaymentTerms() != null) {
+         $writer->write([
+            Schema::CAC . 'PaymentTerms' => $this->getPaymentTerms()
+         ]);
+      }
+
+      if ($this->getAllowanceCharges() != null) {
+         foreach ($this->getAllowanceCharges() as $invoiceLine) {
             $writer->write([
-                Schema::CBC . 'TaxPointDate' => $this->taxPointDate->format('Y-m-d')
+               Schema::CAC . 'AllowanceCharge' => $invoiceLine
             ]);
-        }
+         }
+      }
 
-        if ($this->dueDate != null) {
-            $writer->write([
-                Schema::CBC . 'DueDate' => $this->dueDate->format('Y-m-d')
-            ]);
-        }
+      if ($this->getTaxTotal() != null) {
+         $writer->write([
+            Schema::CAC . 'TaxTotal' => $this->getTaxTotal()
+         ]);
+      }
 
-        $writer->write([
-            Schema::CBC . 'DocumentCurrencyCode' => $this->documentCurrencyCode,
-        ]);
+      $writer->write([
+         Schema::CAC . 'LegalMonetaryTotal' => $this->getLegalMonetaryTotal()
+      ]);
 
-        if ($this->additionalDocumentReference != null) {
-            $writer->write([
-                Schema::CAC . 'AdditionalDocumentReference' => $this->additionalDocumentReference
-            ]);
-        }
+      foreach ($this->getInvoiceLines() as $invoiceLine) {
+         $writer->write([
+            Schema::CAC . 'InvoiceLine' => $invoiceLine
+         ]);
+      }
+   }
 
-        $writer->write([
-            Schema::CAC . 'AccountingSupplierParty' => [Schema::CAC . "Party" => $this->accountingSupplierParty],
-            Schema::CAC . 'AccountingCustomerParty' => [Schema::CAC . "Party" => $this->accountingCustomerParty],
-        ]);
-
-        if ($this->paymentMeans != null) {
-            $writer->write([
-                Schema::CAC . 'PaymentMeans' => $this->paymentMeans
-            ]);
-        }
-
-        if ($this->paymentTerms != null) {
-            $writer->write([
-                Schema::CAC . 'PaymentTerms' => $this->paymentTerms
-            ]);
-        }
-
-        if ($this->allowanceCharges != null) {
-            foreach ($this->allowanceCharges as $invoiceLine) {
-                $writer->write([
-                    Schema::CAC . 'AllowanceCharge' => $invoiceLine
-                ]);
-            }
-        }
-
-        if ($this->taxTotal != null) {
-            $writer->write([
-                Schema::CAC . 'TaxTotal' => $this->taxTotal
-            ]);
-        }
-
-        $writer->write([
-            Schema::CAC . 'LegalMonetaryTotal' => $this->legalMonetaryTotal
-        ]);
-
-        foreach ($this->invoiceLines as $invoiceLine) {
-            $writer->write([
-                Schema::CAC . 'InvoiceLine' => $invoiceLine
-            ]);
-        }
-    }
 }

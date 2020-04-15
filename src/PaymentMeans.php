@@ -1,6 +1,6 @@
 <?php
 
-namespace NumNum\UBL;
+namespace Bullyard\UBL;
 
 use Sabre\Xml\Writer;
 use Sabre\Xml\XmlSerializable;
@@ -12,6 +12,8 @@ class PaymentMeans implements XmlSerializable
     private $paymentMeansCode = 1;
     private $paymentDueDate;
     private $instructionId;
+    private $PayeeFinancialAccount;
+
 
     /**
      * @return mixed
@@ -67,28 +69,50 @@ class PaymentMeans implements XmlSerializable
         return $this;
     }
 
-    public function xmlSerialize(Writer $writer)
-    {
-        $writer->write([
-            'name' => Schema::CBC . 'PaymentMeansCode',
-            'value' => $this->paymentMeansCode,
-            'attributes' => [
-                'listID' => 'UN/ECE 4461',
-                'listName' => 'Payment Means',
-                'listURI' => 'http://docs.oasis-open.org/ubl/os-UBL-2.0-update/cl/gc/default/PaymentMeansCode-2.0.gc'
-            ]
-        ]);
+    /**
+	 * @return mixed
+	 */
+	public function getPayeeFinancialAccount()
+	{
+		return $this->PayeeFinancialAccount;
+	}
 
-        if ($this->getPaymentDueDate() !== null) {
-            $writer->write([
-                Schema::CBC . 'PaymentDueDate' => $this->getPaymentDueDate()->format('Y-m-d')
-            ]);
-        }
+	/**
+	 * @param mixed $orderReference
+	 * @return PaymentMeansEHF
+	 */
+	public function setPayeeFinancialAccount(PayeeFinancialAccount $account)
+	{
+		$this->PayeeFinancialAccount = $account;
+		return $this;
+	}
 
-        if ($this->getInstructionId() !== null) {
-            $writer->write([
-                Schema::CBC . 'InstructionID' => $this->getInstructionId()
-            ]);
-        }
-    }
+   function xmlSerialize(Writer $writer)
+ 	{
+ 		$writer->write([
+ 			'name' => Schema::CBC . 'PaymentMeansCode',
+ 			'value' => $this->paymentMeansCode,
+ 			'attributes' => [
+ 				'listID' => 'UNCL4461'
+ 			]
+ 		]);
+
+ 		if ($this->getPaymentDueDate() !== null) {
+ 			$writer->write([
+ 				Schema::CBC . 'PaymentDueDate' => $this->getPaymentDueDate()->format('Y-m-d')
+ 			]);
+ 		}
+
+      if ($this->getPayeeFinancialAccount() !== null) {
+ 			$writer->write([
+ 				Schema::CAC . 'PayeeFinancialAccount' => $this->getPayeeFinancialAccount()
+ 			]);
+ 		}
+
+ 		if ($this->getInstructionId() !== null) {
+ 			$writer->write([
+ 				Schema::CBC . 'InstructionID' => $this->getInstructionId()
+ 			]);
+ 		}
+ 	}
 }

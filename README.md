@@ -1,3 +1,7 @@
+# UBL-Invoice Modified to be used AS a EHF 2.0 generator
+
+Rough implemntation to support invoice, credit note and reminder 
+
 # UBL-Invoice
 
 A PHP Wrapper for creating UBL invoices. This code is a hard fork of the [`cleverit/UBL_invoice`](https://github.com/CleverIT/UBL_invoice) package. Feel free to contribute if you are missing features.

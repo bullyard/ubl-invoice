@@ -1,6 +1,6 @@
 <?php
 
-namespace NumNum\UBL;
+namespace Bullyard\UBL;
 
 use Sabre\Xml\Writer;
 use Sabre\Xml\XmlSerializable;

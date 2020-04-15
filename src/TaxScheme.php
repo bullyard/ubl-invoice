@@ -1,6 +1,6 @@
 <?php
 
-namespace NumNum\UBL;
+namespace Bullyard\UBL;
 
 use Sabre\Xml\Writer;
 use Sabre\Xml\XmlSerializable;
@@ -44,13 +44,13 @@ class TaxScheme implements XmlSerializable
     {
         $this->taxTypeCode = $taxTypeCode;
         return $this;
-    }
+   }
 
-    public function xmlSerialize(Writer $writer)
-    {
-        $writer->write([
-            Schema::CBC . 'ID' => $this->id,
-            Schema::CBC . 'TaxTypeCode' => $this->taxTypeCode
-        ]);
-    }
+
+   public function xmlSerialize(Writer $writer)
+   {
+      $writer->write([
+         Schema::CBC . 'ID' => $this->getId()
+      ]);
+   }
 }

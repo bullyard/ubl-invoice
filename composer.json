@@ -10,7 +10,8 @@
         "electronic invoice",
         "digital invoice",
         "xml",
-        "xml invoice"
+        "xml invoice",
+        "EHF 2.0"
     ],
     "homepage": "https://github.com/bullyard/ubl-invoice",
     "license": "MIT",
@@ -31,8 +32,8 @@
     },
     "autoload": {
         "psr-4": {
-            "NumNum\\UBL\\": ["src"],
-            "NumNum\\UBL\\Tests\\": ["tests"]
+            "Bullyard\\UBL\\": ["src"],
+            "Bullyard\\UBL\\Tests\\": ["tests"]
         }
     },
     "scripts": {
