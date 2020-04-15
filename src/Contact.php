@@ -97,34 +97,35 @@ class Contact implements XmlSerializable
    */
    function xmlSerialize(Writer $writer)
    {
-   if ($this->getID() !== null) {
-      $writer->write([
-         Schema::CBC . 'ID' => $this->getID()
-      ]);
-   }
+      if ($this->getID() !== null) {
+         $writer->write([
+            Schema::CBC . 'ID' => $this->getID()
+         ]);
+      }
 
-   if ($this->getName() !== null) {
-      $writer->write([
-         Schema::CBC . 'Name' => $this->getName()
-      ]);
-   }
+      if ($this->getName() !== null) {
+         $writer->write([
+            Schema::CBC . 'Name' => $this->getName()
+         ]);
+      }
 
-   if ($this->getTelephone() !== null) {
-      $writer->write([
-         Schema::CBC . 'Telephone' => $this->getTelephone()
-      ]);
-   }
+      if ($this->getTelephone() !== null) {
+         $writer->write([
+            Schema::CBC . 'Telephone' => $this->getTelephone()
+         ]);
+      }
 
-   if ( $this->getTelefax() !== null) {
-      $writer->write([
-         Schema::CBC . 'Telefax' => $this->getTelefax()
-      ]);
-   }
+      if ( $this->getTelefax() !== null) {
+         $writer->write([
+            Schema::CBC . 'Telefax' => $this->getTelefax()
+         ]);
+      }
 
-   if ($this->getElectronicMail() !== null) {
-      $writer->write([
-         Schema::CBC . 'ElectronicMail' => $this->getElectronicMail()
-      ]);
+      if ($this->getElectronicMail() !== null) {
+         $writer->write([
+            Schema::CBC . 'ElectronicMail' => $this->getElectronicMail()
+         ]);
+      }
    }
 
 }
