@@ -8,7 +8,7 @@ use Sabre\Xml\XmlSerializable;
 class Invoice implements XmlSerializable
 {
     private $UBLVersionID = '2.1';
-    private $customizationID = 'urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol5a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0';
+    private $CustomizationID = 'urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol5a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0';
     private $ProfileID = 'urn:www.cenbii.eu:profile:bii05:ver2.0';
     private $OrderReference;
     private $Note;

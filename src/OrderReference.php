@@ -15,7 +15,7 @@ class OrderReference implements XmlSerializable
 	/**
 	 * @return mixed
 	 */
-	public function getPOrderReference()
+	public function getOrderReference()
 	{
 		return $this->OrderReference;
 	}
@@ -24,7 +24,7 @@ class OrderReference implements XmlSerializable
 	 * @param mixed $orderReference
 	 * @return PaymentMeans
 	 */
-	public function setPOrderReference($orderReference)
+	public function setOrderReference($orderReference)
 	{
 		$this->orderReference = $orderReference;
 		return $this;

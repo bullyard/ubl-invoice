@@ -91,7 +91,7 @@ class PaymentMeans implements XmlSerializable
  	{
  		$writer->write([
  			'name' => Schema::CBC . 'PaymentMeansCode',
- 			'value' => $this->paymentMeansCode,
+ 			'value' => $this->getPaymentMeansCode(),
  			'attributes' => [
  				'listID' => 'UNCL4461'
  			]

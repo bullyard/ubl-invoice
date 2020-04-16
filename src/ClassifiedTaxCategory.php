@@ -123,10 +123,10 @@ class ClassifiedTaxCategory implements XmlSerializable
       if ($this->getId() === null) {
       throw new \InvalidArgumentException('Missing taxcategory id');
       }
-
-      if ($this->getName() === null) {
-         throw new \InvalidArgumentException('Missing taxcategory name');
-      }
+      //
+      // if ($this->getName() === null) {
+      //    throw new \InvalidArgumentException('Missing taxcategory name');
+      // }
 
       if ($this->getPercent() === null) {
          throw new \InvalidArgumentException('Missing taxcategory percent');
