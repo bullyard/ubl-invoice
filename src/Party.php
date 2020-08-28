@@ -15,11 +15,14 @@ class Party implements XmlSerializable
    private $taxScheme;
    private $legalEntity;
    private $appendCompanyID = 'MVA';
-   private $schemeId = 'NO:VAT';
-   private $schemeIdItentification = 'ZZZ';
+   private $prependCompanyID = 'NO';
+   private $schemeId = '0192'; // https://docs.peppol.eu/poacc/billing/3.0/codelist/ICD/
+   private $schemeIdItentification = '0192'; // https://docs.peppol.eu/poacc/billing/3.0/codelist/ICD/
+   private $partyIsTaxCompliant = true;
+
    private $identificationId;
    private $endpointId;
-   private $endpointScheme = 'NO:ORGNR';
+   private $endpointScheme = '0192'; // https://docs.peppol.eu/poacc/billing/3.0/codelist/ICD/
 
    /**
    * @return mixed
@@ -80,6 +83,14 @@ class Party implements XmlSerializable
    public function getTaxScheme()
    {
       return $this->taxScheme;
+   }
+
+   public function createTaxScheme($id = 'TAX')
+   {
+      $taxScheme = new TaxScheme();
+      $taxScheme->setId($id);
+      return $taxScheme;
+
    }
 
    /**
@@ -162,6 +173,26 @@ class Party implements XmlSerializable
 		return $this;
 	}
 
+
+   public function setRegisteredCompany(bool $registered)
+   {
+     if ($registered){
+        $this->registered = "Foretaksregisteret";
+     }else{
+         $this->registered = null;
+     }
+     return $this;
+   }
+
+   public function getPartyIsTaxCompliant(){
+		return $this->partyIsTaxCompliant;
+	}
+
+	public function setPartyIsTaxCompliant(bool $partyIsTaxCompliant){
+		$this->partyIsTaxCompliant = $partyIsTaxCompliant;
+      return $this;
+	}
+
    /**
    * The xmlSerialize method is called during xml writing.
    *
@@ -213,21 +244,38 @@ class Party implements XmlSerializable
 
 
 		if ($this->getTaxScheme()) {
+
+         if ($this->getPartyIsTaxCompliant()){
+            $organizationString = $this->prependCompanyID.$this->getCompanyId().$this->appendCompanyID;
+         }else{
+            $organizationString = $this->prependCompanyID.$this->getCompanyId();
+         }
+
 			$writer->write([
 				Schema::CAC . 'PartyTaxScheme' => [
-					Schema::CBC . 'RegistrationName' => $this->getName(),
+
                [
       				'name' => Schema::CBC . 'CompanyID',
-      				'value' => $this->getCompanyId().$this->appendCompanyID,
-      				'attributes' => [
-      					'schemeID' => $this->schemeId
-      				]
+      				'value' => $organizationString
       			],
 
 					Schema::CAC . 'TaxScheme' => $this->getTaxScheme()
 				]
 			]);
+
+         if ($this->registered) {
+   			$writer->write([
+   				Schema::CAC . 'PartyTaxScheme' => [
+                  [
+         				Schema::CBC . 'CompanyID' => $this->registered
+         			],
+   					Schema::CAC . 'TaxScheme' => $this->createTaxScheme('TAX')
+   				]
+   			]);
+   		}
 		}
+
+
 
 
       if ($this->getLegalEntity()) {

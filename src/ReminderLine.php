@@ -8,53 +8,61 @@ use Sabre\Xml\XmlSerializable;
 class ReminderLine extends InvoiceLine
 {
 
-	public function setReminderReference(string $reminderReference)
+	/**
+   * The xmlSerialize method is called during xml writing.
+   * @param Writer $writer
+   * @return void
+   */
+   function xmlSerialize(Writer $writer)
 	{
-		$this->reminderReference = $reminderReference;
-		return $this;
-	}
+		$writer->write([
+			Schema::CBC . 'ID' => $this->getId()
+		]);
 
-	public function getReminderReference()
-	{
-		return $this->reminderReference;
-	}
-
-
-	function xmlSerialize(Writer $writer)
- 	{
- 		$writer->write([
- 			Schema::CBC . 'ID' => $this->getId()
- 		]);
-
- 		if (!empty($this->getNote())) {
- 			$writer->write([
- 				Schema::CBC . 'Note' => $this->getNote()
- 			]);
- 		}
-
-
+		if (!empty($this->getNote())) {
+			$writer->write([
+				Schema::CBC . 'Note' => $this->getNote()
+			]);
+		}
 
 		$writer->write([
-			'name' => Schema::CBC . 'DebitLineAmount',
-			'value' => number_format($this->getLineExtensionAmount() * $this->getInvoicedQuantity(), 2, '.', ''),
-			'attributes' => [
-				'currencyID' => Generator::$currencyID
+			[
+				'name' => Schema::CBC . 'InvoicedQuantity',
+				'value' => $this->getInvoicedQuantity(),
+				'attributes' => [
+					'unitCode' => $this->getUnitCode()
+				]
+			],
+			[
+				'name' => Schema::CBC . 'LineExtensionAmount',
+				'value' => number_format($this->getLineExtensionAmount(), 2, '.', ''),
+				'attributes' => [
+					'currencyID' => Generator::$currencyID
+				]
 			]
+
 		]);
 
 
-      $writer->write([
-         Schema::CAC . 'BillingReference' => [
-         	Schema::CAC . 'InvoiceDocumentReference' => [
-					Schema::CBC . 'ID' => $this->getReminderReference()
-				]
-         ]
-      ]);
-
       if ($this->getAllowanceCharge() !== null){
-          $writer->write([Schema::CAC . 'AllowanceCharge' => $this->getAllowanceCharge()]);
+         $writer->write([Schema::CAC . 'AllowanceCharge' => $this->getAllowanceCharge()]);
       }
 
+   	$writer->write([
+         //Schema::CAC . 'TaxTotal' => $this->getTaxTotal(),
+         Schema::CAC . 'Item' => $this->getItem()
+      ]);
+
+
+		if ($this->getPrice() !== null) {
+			$writer->write([
+				Schema::CAC . 'Price' => $this->getPrice()
+			]);
+		} else {
+			$writer->write([
+				Schema::CAC . 'TaxScheme' => null,
+			]);
+		}
 	}
 
 }

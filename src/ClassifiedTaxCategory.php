@@ -20,11 +20,9 @@ class ClassifiedTaxCategory implements XmlSerializable
 
      public function getId()
    {
-      /* https://vefa.difi.no/ehf/g2/invoice-and-creditnote/2.0/no/#_merverdiavgift
-      S -> Utgående merverdiavgift, alminnelig sats -> 25%
-      H -> Utgående merverdiavgift, redusert sats – næringsmidler -> 15%
-      A -> Utgående merverdiavgift, redusert sats – lav sats -> 10%
-      Z -> Unntatt fra merverdiavgiftsloven (utenfor merverdiavgiftsloven) -> 0%
+      /* https://docs.peppol.eu/poacc/billing/3.0/codelist/UNCL5305/
+      S -> Utgående merverdiavgift
+      E -> Unntatt fra merverdiavgiftsloven (utenfor merverdiavgiftsloven) -> 0%
       */
       if (!empty($this->id)) {
          return $this->id;
@@ -32,15 +30,10 @@ class ClassifiedTaxCategory implements XmlSerializable
 
       $percent = $this->getPercent();
       if ($percent !== null) {
-
-         if ($percent >= 25) {
+         if ($percent >= 1) {
             return 'S';
-         } else if ($percent >= 15) {
-            return 'H';
-         } else if ($percent >= 10) {
-            return 'AA';
          } else {
-            return 'Z';
+            return 'E';
          }
       }
 
@@ -146,10 +139,7 @@ class ClassifiedTaxCategory implements XmlSerializable
 		$writer->write([
 			[
 				'name' => Schema::CBC . 'ID',
-				'value' => $this->getId(),
-				'attributes' => [
-					'schemeID' => ClassifiedTaxCategory::UNCL5305
-				]
+				'value' => $this->getId()
 			],
 			//Schema::CBC . 'Name' => $this->getName(),
 			Schema::CBC . 'Percent' => number_format($this->getPercent(), 2, '.', ''),

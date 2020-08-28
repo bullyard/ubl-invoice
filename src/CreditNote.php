@@ -7,13 +7,13 @@ use Sabre\Xml\XmlSerializable;
 
 class CreditNote extends Invoice
 {
-
-   private $UBLVersionID = '2.1';
-   private $CustomizationID = 'urn:www.cenbii.eu:transaction:biitrns014:ver2.0:extended:urn:www.peppol.eu:bis:peppol5a:ver2.0:extended:urn:www.difi.no:ehf:kreditnota:ver2.0';
-   private $ProfileID = 'urn:www.cenbii.eu:profile:bii05:ver2.0';
+   private $CustomizationID = 'urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0';
+   private $ProfileID = 'urn:fdc:peppol.eu:2017:poacc:billing:01:1.0';
    private $OrderReference;
    private $Note;
-	private $creditNoteReference;
+	 private $creditNoteReference;
+   private $invoiceTypeCode = InvoiceTypeCode::CREDIT_NOTE;
+
 
    public function setProfileID(string $id)
    {
@@ -67,12 +67,14 @@ class CreditNote extends Invoice
       //$this->validate();
 
       $writer->write([
-         Schema::CBC . 'UBLVersionID' => $this->UBLVersionID,
          Schema::CBC . 'CustomizationID' => $this->CustomizationID,
          Schema::CBC . 'ProfileID' => $this->ProfileID,
          Schema::CBC . 'ID' => $this->getId(),
          //Schema::CBC . 'CopyIndicator' => $this->isCopyIndicator() ? 'true' : 'false',
-         Schema::CBC . 'IssueDate' => $this->getIssueDate()->format('Y-m-d')
+         Schema::CBC . 'IssueDate' => $this->getIssueDate()->format('Y-m-d'),
+         [
+            Schema::CBC . 'CreditNoteTypeCode' => $this->invoiceTypeCode //https://docs.peppol.eu/poacc/billing/3.0/codelist/UNCL1001-inv/
+         ]
       ]);
 
 
@@ -84,12 +86,15 @@ class CreditNote extends Invoice
 
 
       $writer->write([
-         'name' => Schema::CBC . 'DocumentCurrencyCode',
-         'value' => 'NOK',
-         'attributes' => [
-            'listID' => 'ISO4217' //https://docs.peppol.eu/poacc/billing/3.0/codelist/UNCL1001-inv/
-         ]
+         Schema::CBC . 'DocumentCurrencyCode' => 'NOK'
       ]);
+
+      if ($this->getOrderReference() != null) {
+         $writer->write([
+            Schema::CAC . 'OrderReference' => $this->getOrderReference()
+         ]);
+      }
+
 
 		$writer->write([
          Schema::CAC . 'BillingReference' => [
@@ -106,11 +111,7 @@ class CreditNote extends Invoice
          ]);
       }
 
-      if ($this->getOrderReference() != null) {
-         $writer->write([
-            Schema::CAC . 'OrderReference' => $this->getOrderReference()
-         ]);
-      }
+
 
       $writer->write([
          Schema::CAC . 'AccountingSupplierParty' => [Schema::CAC . "Party" => $this->getAccountingSupplierParty()],

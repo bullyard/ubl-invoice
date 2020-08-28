@@ -8,9 +8,10 @@ use Sabre\Xml\XmlSerializable;
 class Invoice implements XmlSerializable
 {
     private $UBLVersionID = '2.1';
-    private $CustomizationID = 'urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol5a:ver2.0:extended:urn:www.difi.no:ehf:faktura:ver2.0';
-    private $ProfileID = 'urn:www.cenbii.eu:profile:bii05:ver2.0';
+    private $CustomizationID = 'urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0';
+    private $ProfileID = 'urn:fdc:peppol.eu:2017:poacc:billing:01:1.0';
     private $OrderReference;
+    private $BuyerReference;
     private $Note;
     private $id;
     private $copyIndicator = false;
@@ -26,8 +27,8 @@ class Invoice implements XmlSerializable
     private $legalMonetaryTotal;
     private $invoiceLines;
     private $allowanceCharges;
-    private $additionalDocumentReference;
-    private $documentCurrencyCode = 'EUR';
+    private $additionalDocumentReference = array();
+    private $documentCurrencyCode = 'NOK';
 
 
     /**
@@ -122,14 +123,21 @@ class Invoice implements XmlSerializable
     }
 
 
+
+
     /**
      * @param mixed $currencyCode
      * @return Invoice
      */
-    public function setDocumentCurrencyCode(string $currencyCode = 'EUR')
+    public function setDocumentCurrencyCode(string $currencyCode = 'NOK')
     {
         $this->documentCurrencyCode = $currencyCode;
         return $this;
+    }
+
+    public function getDocumentCurrencyCode()
+    {
+        return $this->documentCurrencyCode;
     }
 
 
@@ -328,7 +336,7 @@ class Invoice implements XmlSerializable
      */
     public function setAdditionalDocumentReference(AdditionalDocumentReference $additionalDocumentReference)
     {
-        $this->additionalDocumentReference = $additionalDocumentReference;
+        $this->additionalDocumentReference[] = $additionalDocumentReference;
         return $this;
     }
 
@@ -341,6 +349,15 @@ class Invoice implements XmlSerializable
    public function getProfileID()
    {
       return $this->ProfileID;
+   }
+
+   public function getCustomizationID(){
+   		return $this->CustomizationID;
+   }
+
+   public function setCustomizationID($CustomizationID){
+   		$this->CustomizationID = $CustomizationID;
+      return $this;
    }
 
    public function setNote(string $Note)
@@ -365,6 +382,19 @@ class Invoice implements XmlSerializable
       $this->OrderReference = $value;
       return $this;
    }
+
+   public function getBuyerReference()
+   {
+      return $this->BuyerReference;
+   }
+
+   public function setBuyerReference($value)
+   {
+      $this->BuyerReference = $value;
+      return $this;
+   }
+
+
 
     /**
      * The validate function that is called during xml writing to valid the data of the object.
@@ -417,18 +447,16 @@ class Invoice implements XmlSerializable
       $this->validate();
 
       $writer->write([
-         Schema::CBC . 'UBLVersionID' => $this->UBLVersionID,
+         //Schema::CBC . 'UBLVersionID' => $this->UBLVersionID,
          Schema::CBC . 'CustomizationID' => $this->CustomizationID,
          Schema::CBC . 'ProfileID' => $this->ProfileID,
          Schema::CBC . 'ID' => $this->getId(),
          //Schema::CBC . 'CopyIndicator' => $this->isCopyIndicator() ? 'true' : 'false',
          Schema::CBC . 'IssueDate' => $this->getIssueDate()->format('Y-m-d'),
+         Schema::CBC . 'DueDate' => $this->getDueDate()->format('Y-m-d'),
          [
-            'name' => Schema::CBC . 'InvoiceTypeCode',
-            'value' => $this->getInvoiceTypeCode(),
-            'attributes' => [
-               'listID' => 'UNCL1001' //https://docs.peppol.eu/poacc/billing/3.0/codelist/UNCL1001-inv/
-            ]
+            Schema::CBC . 'InvoiceTypeCode' => $this->getInvoiceTypeCode() //https://docs.peppol.eu/poacc/billing/3.0/codelist/UNCL1001-inv/
+
          ]
       ]);
 
@@ -446,18 +474,21 @@ class Invoice implements XmlSerializable
       }
 
       $writer->write([
-         'name' => Schema::CBC . 'DocumentCurrencyCode',
-         'value' => 'NOK',
-         'attributes' => [
-            'listID' => 'ISO4217' //https://docs.peppol.eu/poacc/billing/3.0/codelist/UNCL1001-inv/
-         ]
+         Schema::CBC . 'DocumentCurrencyCode' => $this->getDocumentCurrencyCode()
       ]);
 
-      if ($this->getAdditionalDocumentReference() != null) {
+
+      // cbc:TaxCurrencyCode
+
+      // cbc:AccountingCost
+
+      if ($this->getBuyerReference() != null) {
          $writer->write([
-            Schema::CAC . 'AdditionalDocumentReference' => $this->getAdditionalDocumentReference()
+            Schema::CBC . 'BuyerReference' => $this->getBuyerReference()
          ]);
       }
+
+      //  cac:InvoicePeriod
 
       if ($this->getOrderReference() != null) {
          $writer->write([
@@ -465,10 +496,37 @@ class Invoice implements XmlSerializable
          ]);
       }
 
+      // cac:BillingReference
+
+      // cac:DespatchDocumentReference
+
+      // cac:ReceiptDocumentReference
+
+      // cac:OriginatorDocumentReference
+
+      // cac:ContractDocumentReference
+
+      if ($this->getAdditionalDocumentReference() != null && !empty($this->getAdditionalDocumentReference())) {
+         foreach ($this->getAdditionalDocumentReference() as $key => $AddDocRef) {
+            $writer->write([
+               Schema::CAC . 'AdditionalDocumentReference' => $AddDocRef
+            ]);
+         }
+
+      }
+
+      // cac:ProjectReference
+
       $writer->write([
          Schema::CAC . 'AccountingSupplierParty' => [Schema::CAC . "Party" => $this->getAccountingSupplierParty()],
          Schema::CAC . 'AccountingCustomerParty' => [Schema::CAC . "Party" => $this->getAccountingCustomerParty()],
       ]);
+
+      // cac:PayeeParty
+
+      // cac:TaxRepresentativeParty
+
+      // cac:Delivery
 
       if ($this->getPaymentMeans() != null) {
          $writer->write([

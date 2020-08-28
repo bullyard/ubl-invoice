@@ -18,20 +18,31 @@ class LegalMonetaryTotal implements XmlSerializable
    {
       $this->setTaxExclusiveAmount($valueWithoutTax);
       $this->setLineExtensionAmount($valueWithoutTax);
+      $this->setTaxInclusiveAmount($valueWithTax);
 
       $difference = 0;
       $rounded = round($valueWithTax);
 
       if ($rounded < $valueWithTax){
-         $difference = $rounded - $valueWithTax ;
+         $difference = $rounded - $valueWithTax;
+
+
       }else{
          $difference = abs($valueWithTax - $rounded);
-      }
 
+         // validate the rounding on difference so it doesent fails in validator
+         $testDifference = round($difference, 2);
+         $testVWT = round($valueWithTax, 2);
+
+         if (($testVWT + $testDifference) != $rounded){
+            $difference = abs($testVWT - $rounded);
+         }
+
+      }
 
       $this->setPayableRoundingAmount($difference);
       $this->setPayableAmount($rounded);
-      $this->setTaxInclusiveAmount($rounded);
+
    }
 
    /**

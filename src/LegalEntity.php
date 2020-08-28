@@ -11,8 +11,6 @@ class LegalEntity implements XmlSerializable
    private $companyId;
    private $registrationAddress;
    private $name;
-   private $schemeId = 'NO:ORGNR';
-   private $schemeName = '';
 
    public function getRegistrationName()
    {
@@ -32,27 +30,6 @@ class LegalEntity implements XmlSerializable
    public function setCompanyId($companyId)
    {
       $this->companyId = $companyId;
-   }
-
-   public function setRegisteredCompany(bool $registered)
-   {
-     if ($registered){
-        $this->setSchemeName('Foretaksregisteret');
-     }else{
-        $this->setSchemeName('');
-     }
-     return $this;
-   }
-
-   public function setSchemeName(string $schemeName)
-   {
-      $this->schemeName = $schemeName;
-      return $this;
-   }
-
-   public function getSchemeName()
-   {
-      return $this->schemeName;
    }
 
 
@@ -99,27 +76,13 @@ class LegalEntity implements XmlSerializable
 		$writer->write([
          Schema::CBC . 'RegistrationName' => $this->getRegistrationName(),
 
+      ]);
+
+      $writer->write([
+         'name' => Schema::CBC . 'CompanyID',
+         'value' => $this->getCompanyId()
 
       ]);
-      if (!empty($this->schemeName)){
-         $writer->write([
-            'name' => Schema::CBC . 'CompanyID',
-            'value' => $this->getCompanyId(),
-            'attributes' => [
-               'schemeID' => $this->schemeId,
-               'schemeName' => $this->schemeName
-            ]
-         ]);
-      }else{
-
-         $writer->write([
-            'name' => Schema::CBC . 'CompanyID',
-            'value' => $this->getCompanyId(),
-            'attributes' => [
-               'schemeID' => $this->schemeId
-            ]
-         ]);
-      }
 
 
       if ($this->getRegistrationAddress()){

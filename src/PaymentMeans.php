@@ -10,7 +10,6 @@ use DateTime;
 class PaymentMeans implements XmlSerializable
 {
     private $paymentMeansCode = 1;
-    private $paymentDueDate;
     private $instructionId;
     private $PayeeFinancialAccount;
 
@@ -33,23 +32,7 @@ class PaymentMeans implements XmlSerializable
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getPaymentDueDate()
-    {
-        return $this->paymentDueDate;
-    }
 
-    /**
-     * @param \DateTime $paymentDueDate
-     * @return PaymentMeans
-     */
-    public function setPaymentDueDate(\DateTime $paymentDueDate)
-    {
-        $this->paymentDueDate = $paymentDueDate;
-        return $this;
-    }
 
     /**
      * @return mixed
@@ -90,18 +73,11 @@ class PaymentMeans implements XmlSerializable
    function xmlSerialize(Writer $writer)
  	{
  		$writer->write([
- 			'name' => Schema::CBC . 'PaymentMeansCode',
- 			'value' => $this->getPaymentMeansCode(),
- 			'attributes' => [
- 				'listID' => 'UNCL4461'
- 			]
+ 			Schema::CBC . 'PaymentMeansCode' => $this->getPaymentMeansCode(),
+
  		]);
 
- 		if ($this->getPaymentDueDate() !== null) {
- 			$writer->write([
- 				Schema::CBC . 'PaymentDueDate' => $this->getPaymentDueDate()->format('Y-m-d')
- 			]);
- 		}
+
 
       if ($this->getPayeeFinancialAccount() !== null) {
  			$writer->write([

@@ -10,12 +10,11 @@ class InvoiceLine implements XmlSerializable
    private $id;
    private $invoicedQuantity;
    private $lineExtensionAmount;
-   private $unitCode = 'VAR';
+   private $unitCode = 'NAR';
    private $taxTotal;
    private $note;
    private $item;
    private $price;
-   private $unitCodeListID = "UNECERec20"; // https://docs.peppol.eu/poacc/billing/3.0/codelist/UNECERec20/
    private $allowanceCharge;
 
    function __construct($unitCode = false)
@@ -180,17 +179,6 @@ class InvoiceLine implements XmlSerializable
       return $this->allowanceCharge;
    }
 
-   public function setUnitCodeListID(string $id)
-   {
-      $this->unitCodeListID = $id;
-      return $this;
-   }
-
-   public function getUnitCodeListID()
-   {
-      return $this->unitCodeListID;
-   }
-
 
    /**
    * The xmlSerialize method is called during xml writing.
@@ -214,8 +202,7 @@ class InvoiceLine implements XmlSerializable
 				'name' => Schema::CBC . 'InvoicedQuantity',
 				'value' => $this->getInvoicedQuantity(),
 				'attributes' => [
-					'unitCode' => $this->getUnitCode(),
-               'unitCodeListID' => $this->getUnitCodeListID()
+					'unitCode' => $this->getUnitCode()
 				]
 			],
 			[

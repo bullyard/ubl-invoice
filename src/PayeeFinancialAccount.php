@@ -9,7 +9,7 @@ use Sabre\Xml\XmlSerializable;
 class PayeeFinancialAccount implements XmlSerializable
 {
 	private $Id;
-	private $IdScheme = "BBAN";
+
 
 	/**
 	 * @return mixed
@@ -29,34 +29,14 @@ class PayeeFinancialAccount implements XmlSerializable
 		return $this;
 	}
 
-	/**
-	 * @return mixed
-	 */
-	public function getIdScheme()
-	{
-		return $this->IdScheme;
-	}
-
-	/**
-	 * @param mixed $IdScheme
-	 * @return PayeeFinancialAccount
-	 */
-	public function setIdScheme(string $IdScheme)
-	{
-		$this->IdScheme = $IdScheme;
-		return $this;
-	}
 
 	function xmlSerialize(Writer $writer)
 	{
 
 		if ($this->getId() !== null) {
 			$writer->write([
-				'name' => Schema::CBC . 'ID',
-				'value' => $this->getId(),
-				'attributes' => [
-					'schemeID' => $this->getIdScheme()
-				]
+				Schema::CBC . 'ID' => $this->getId(),
+
 			]);
 
 		}

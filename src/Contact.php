@@ -10,7 +10,6 @@ class Contact implements XmlSerializable
    private $telephone;
    private $telefax;
    private $electronicMail;
-   private $id;
    private $name;
 
    /**
@@ -67,16 +66,7 @@ class Contact implements XmlSerializable
       return $this;
    }
 
-   public function setID(string $id)
-   {
-      $this->id = $id;
-      return $this;
-   }
 
-   public function getID()
-   {
-      return $this->id;
-   }
 
    public function setName(string $name)
    {
@@ -97,11 +87,7 @@ class Contact implements XmlSerializable
    */
    function xmlSerialize(Writer $writer)
    {
-      if ($this->getID() !== null) {
-         $writer->write([
-            Schema::CBC . 'ID' => $this->getID()
-         ]);
-      }
+
 
       if ($this->getName() !== null) {
          $writer->write([
