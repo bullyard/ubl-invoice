@@ -11,8 +11,9 @@ class CreditNote extends Invoice
    private $ProfileID = 'urn:fdc:peppol.eu:2017:poacc:billing:01:1.0';
    private $OrderReference;
    private $Note;
-	 private $creditNoteReference;
+	private $creditNoteReference;
    private $invoiceTypeCode = InvoiceTypeCode::CREDIT_NOTE;
+   private $documentType =  "CreditNote";
 
 
    public function setProfileID(string $id)

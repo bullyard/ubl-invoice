@@ -29,6 +29,7 @@ class Invoice implements XmlSerializable
     private $allowanceCharges;
     private $additionalDocumentReference = array();
     private $documentCurrencyCode = 'NOK';
+    private $documentType =  "Invoice";
 
 
     /**
@@ -394,7 +395,10 @@ class Invoice implements XmlSerializable
       return $this;
    }
 
-
+   public function getDocumentType()
+   {
+      return $this->documentType;
+   }
 
     /**
      * The validate function that is called during xml writing to valid the data of the object.
