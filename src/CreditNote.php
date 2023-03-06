@@ -99,11 +99,12 @@ class CreditNote extends Invoice
 			]
       ]);
 
-
-      if ($this->getAdditionalDocumentReference() != null) {
-         $writer->write([
-            Schema::CAC . 'AdditionalDocumentReference' => $this->getAdditionalDocumentReference()
-         ]);
+      if ($this->getAdditionalDocumentReference() != null && !empty($this->getAdditionalDocumentReference())) {
+        foreach ($this->getAdditionalDocumentReference() as $key => $AddDocRef) {
+            $writer->write([
+               Schema::CAC . 'AdditionalDocumentReference' => $AddDocRef
+            ]);
+         }
       }
 
       if ($this->getOrderReference() != null) {
