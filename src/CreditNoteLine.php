@@ -8,22 +8,6 @@ use Sabre\Xml\XmlSerializable;
 class CreditNoteLine extends InvoiceLine
 {
 
-	private $creditNoteReference;
-
-	public function setCreditNoteReference(string $creditNoteReference)
-   {
-
-      $this->creditNoteReference = $creditNoteReference;
-      return $this;
-
-   }
-
-   public function getCreditNoteReference()
-   {
-      return $this->creditNoteReference;
-   }
-
-
 	function xmlSerialize(Writer $writer)
 	{
 		$writer->write([
@@ -41,8 +25,8 @@ class CreditNoteLine extends InvoiceLine
 				'name' => Schema::CBC . 'CreditedQuantity',
 				'value' => $this->getInvoicedQuantity(),
 				'attributes' => [
-					'unitCode' => $this->getUnitCode(),
-               'unitCodeListID' => $this->getUnitCodeListID()
+					'unitCode' => $this->getUnitCode()
+
 				]
 			],
 			[
@@ -59,18 +43,6 @@ class CreditNoteLine extends InvoiceLine
          Schema::CAC . 'OrderLineReference' => [
             Schema::CBC . 'LineID' => $this->getId()
          ]
-      ]);
-
-		// billing reference
-		$writer->write([
-         Schema::CAC . 'BillingReference' => [
-				Schema::CAC . 'InvoiceDocumentReference' => [
-					Schema::CBC . 'ID' => $this->getCreditNoteReference()
-				],
-				Schema::CAC . 'BillingReferenceLine' => [
-					Schema::CBC . 'ID' => $this->getId()
-				]
-			]
       ]);
 
       if ($this->getAllowanceCharge() !== null){

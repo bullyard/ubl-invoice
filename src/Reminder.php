@@ -8,12 +8,8 @@ use Sabre\Xml\XmlSerializable;
 class Reminder extends Invoice
 {
 
-   private $UBLVersionID = '2.0';
-   private $CustomizationID = 'urn:www.cenbii.eu:transaction:biicoretrdm017:ver1.0:#urn:www.cenbii.eu:profile:biixy:ver1.0#urn:www.difi.no:ehf:purring:ver1';
-   private $ProfileID = 'urn:www.cenbii.eu:profile:biixy:ver1.0';
-   private $OrderReference;
-   private $Note;
-
+   private $CustomizationID = 'urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0#conformant#urn:fdc:anskaffelser.no:2019:ehf:reminder:3.0';
+   private $ProfileID = 'urn:fdc:anskaffelser.no:2019:ehf:postaward:g3:06:1.0';
 
 
    public function setProfileID(string $id)
@@ -27,27 +23,16 @@ class Reminder extends Invoice
       return $this->ProfileID;
    }
 
-   public function setNote(string $Note)
+
+   public function setReminderReference(string $reminderReference)
    {
-      $this->Note = $Note;
+      $this->reminderReference = $reminderReference;
       return $this;
    }
 
-   public function getNote()
+   public function getReminderReference()
    {
-      return $this->Note;
-   }
-
-
-   public function getOrderReference()
-   {
-      return $this->OrderReference;
-   }
-
-   public function setOrderReference($value)
-   {
-      $this->OrderReference = $value;
-      return $this;
+      return $this->reminderReference;
    }
 
 
@@ -56,16 +41,13 @@ class Reminder extends Invoice
       //$this->validate();
 
       $writer->write([
-         Schema::CBC . 'UBLVersionID' => $this->UBLVersionID,
+
          Schema::CBC . 'CustomizationID' => $this->CustomizationID,
          Schema::CBC . 'ProfileID' => $this->ProfileID,
          Schema::CBC . 'ID' => $this->getId(),
          //Schema::CBC . 'CopyIndicator' => $this->isCopyIndicator() ? 'true' : 'false',
          Schema::CBC . 'IssueDate' => $this->getIssueDate()->format('Y-m-d'),
-         [
-            'name' => Schema::CBC . 'ReminderTypeCode',
-            'value' => $this->getInvoiceTypeCode()
-         ]
+         Schema::CBC . 'DueDate' => $this->getDueDate()->format('Y-m-d')
       ]);
 
 
@@ -83,11 +65,14 @@ class Reminder extends Invoice
 
       $writer->write([
          'name' => Schema::CBC . 'DocumentCurrencyCode',
-         'value' => 'NOK',
-         'attributes' => [
-            'listID' => 'ISO4217' //https://docs.peppol.eu/poacc/billing/3.0/codelist/UNCL1001-inv/
-         ]
+         'value' => 'NOK'
       ]);
+
+      if ($this->getBuyerReference() != null) {
+         $writer->write([
+            Schema::CBC . 'BuyerReference' => $this->getBuyerReference()
+         ]);
+      }
 
       if ($this->getAdditionalDocumentReference() != null) {
          $writer->write([
@@ -95,11 +80,13 @@ class Reminder extends Invoice
          ]);
       }
 
-      if ($this->getOrderReference() != null) {
-         $writer->write([
-            Schema::CAC . 'OrderReference' => $this->getOrderReference()
-         ]);
-      }
+      $writer->write([
+         Schema::CAC . 'BillingReference' => [
+         	Schema::CAC . 'InvoiceDocumentReference' => [
+					Schema::CBC . 'ID' => $this->getReminderReference()
+				]
+         ]
+      ]);
 
       $writer->write([
          Schema::CAC . 'AccountingSupplierParty' => [Schema::CAC . "Party" => $this->getAccountingSupplierParty()],
@@ -138,7 +125,7 @@ class Reminder extends Invoice
 
       foreach ($this->getInvoiceLines() as $invoiceLine) {
          $writer->write([
-            Schema::CAC . 'ReminderLine' => $invoiceLine
+            Schema::CAC . 'InvoiceLine' => $invoiceLine
          ]);
       }
    }

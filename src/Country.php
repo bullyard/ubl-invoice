@@ -8,7 +8,7 @@ use Sabre\Xml\XmlSerializable;
 class Country implements XmlSerializable
 {
    private $identificationCode;
-   private $listID = 'ISO3166-1:Alpha2';
+
 
    /**
    * @return mixed
@@ -28,16 +28,7 @@ class Country implements XmlSerializable
       return $this;
    }
 
-   public function setListID(string $listID)
-   {
-      $this->listID = $listID;
-      return $this;
-   }
 
-   public function getListID()
-   {
-      return $this->listID;
-   }
 
    /**
    * The xmlSerialize method is called during xml writing.
@@ -49,11 +40,7 @@ class Country implements XmlSerializable
 	{
 		$writer->write(
          [
-            'name' => Schema::CBC . 'IdentificationCode',
-            'value' => $this->getIdentificationCode(),
-            'attributes' => [
-               'listID' => $this->getListID()
-            ]
+            Schema::CBC . 'IdentificationCode' => $this->getIdentificationCode(),
          ]
       );
 	}
