@@ -1,4 +1,4 @@
-# UBL-Invoice Modified to be used as an EHF 2.0 generator
+# UBL-Invoice Modified to be used as an EHF 3.0 generator
 
 Rough implemntation to support invoice, credit note and reminder 
 
@@ -8,7 +8,7 @@ A PHP Wrapper for creating UBL invoices. This code is a hard fork of the [`cleve
 
 ## Installation and usage
 
-This package requires PHP 7.0 or higher. Installation can be done with [composer](https://www.getcomposer.org).
+This package requires PHP 8.0 or higher. Installation can be done with [composer](https://www.getcomposer.org).
 
 ```sh
 composer require bullyard/ubl-invoice
