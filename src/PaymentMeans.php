@@ -12,6 +12,7 @@ class PaymentMeans implements XmlSerializable
     private $paymentMeansCode = 1;
     private $instructionId;
     private $PayeeFinancialAccount;
+    private $paymentID;
 
 
     /**
@@ -29,6 +30,25 @@ class PaymentMeans implements XmlSerializable
     public function setPaymentMeansCode($paymentMeansCode)
     {
         $this->paymentMeansCode = $paymentMeansCode;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPaymentID()
+    {
+        return $this->paymentID;
+    }
+
+
+    /**
+     * @param mixed $paymentID (USED FOR KID)
+     * @return PaymentMeans
+     */
+    public function setPaymentID($paymentID)
+    {
+        $this->paymentID = $paymentID;
         return $this;
     }
 
@@ -73,13 +93,17 @@ class PaymentMeans implements XmlSerializable
    function xmlSerialize(Writer $writer)
  	{
  		$writer->write([
- 			Schema::CBC . 'PaymentMeansCode' => $this->getPaymentMeansCode(),
-
+ 			Schema::CBC . 'PaymentMeansCode' => $this->getPaymentMeansCode()
  		]);
 
+        // add KID code if exists
+        if (!empty($this->getPaymentID())) {
+            $writer->write([
+                Schema::CBC . 'PaymentID' => $this->getPaymentID()
+            ]); 
+        }
 
-
-      if ($this->getPayeeFinancialAccount() !== null) {
+        if ($this->getPayeeFinancialAccount() !== null) {
  			$writer->write([
  				Schema::CAC . 'PayeeFinancialAccount' => $this->getPayeeFinancialAccount()
  			]);

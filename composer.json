@@ -1,6 +1,6 @@
 {
     "name": "bullyard/ubl-invoice",
-    "description": "A modern object-oriented PHP library to create valid UBL files",
+    "description": "A modern object-oriented PHP library to create valid EHF 3.0 xml-files",
     "keywords": [
         "ubl",
         "invoice",
@@ -11,7 +11,7 @@
         "digital invoice",
         "xml",
         "xml invoice",
-        "EHF 2.0"
+        "EHF 3.0"
     ],
     "homepage": "https://github.com/bullyard/ubl-invoice",
     "license": "MIT",
