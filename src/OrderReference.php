@@ -11,9 +11,10 @@ class OrderReference implements XmlSerializable
 {
 	private $OrderReference;
 	private $id;
+	public $orderReference;
 
 	/**
-	 * @return mixed
+	 * @return mixedz
 	 */
 	public function getOrderReference()
 	{
